@@ -10,9 +10,9 @@ namespace SudokuSolver
         const int POPULATION_SIZE = 2000;
         const float PRECENTAGE_OF_ELITISM = 0.01f;
         const float PERCENTAGE_OF_PARENTS_TO_KEEP = 1.0f;
-        const int CANDIDATES_NB_IN_TOURNAME = 3;
+        const int CANDIDATES_NB_IN_TOURNAMENT = 3;
         const float PERCENTAGE_OF_OFFSPRING_MUTATION_CHANCE = 0.5f;
-        float PERCENTAGE_OF_GENE_MUTATION_CHANCE = 0.1f;
+        const float PERCENTAGE_OF_GENE_MUTATION_CHANCE = 0.1f;
 
         // Cached sudoku data
         private string[] templateGrid;
@@ -101,7 +101,7 @@ namespace SudokuSolver
         private string TournamentSelection(List<Sudoku> eligibleParents)
         {
             var tournament = new List<Sudoku>();
-            for (int i = 0; i < Math.Min(CANDIDATES_NB_IN_TOURNAME, eligibleParents.Count); i++)
+            for (int i = 0; i < Math.Min(CANDIDATES_NB_IN_TOURNAMENT, eligibleParents.Count); i++)
             {
                 tournament.Add(eligibleParents[random.Next(0, eligibleParents.Count)]);
             }
