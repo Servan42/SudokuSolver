@@ -7,7 +7,6 @@ namespace SudokuSolver
     {
         public const int WINNING_SCORE = 3 * 9 * 9;
 
-        private static readonly ReadOnlyCollection<char> EXPECTED_NUMBERS = new(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
         private static readonly ReadOnlyCollection<(int line, int col)> SQUARE_CENTERS = new([
             (1, 1), (1, 4), (1, 7),
             (4, 1), (4, 4), (4, 7),
@@ -40,37 +39,41 @@ namespace SudokuSolver
         {
             var score = 0;
             foreach (var line in filledGrid)
-                score += GetScore(line.ToList());
+                score += GetScore(line);
 
-            for (int col = 0; col < filledGrid.Count; col++)
+            for (int col = 0; col < 9; col++)
             {
-                var colNumbers = new List<char>();
-                for (int line = 0; line < filledGrid.Count; line++)
+                var colNumbers = new char[9];
+                for (int line = 0; line < 9; line++)
                 {
-                    colNumbers.Add(filledGrid[line][col]);
+                    colNumbers[line] = filledGrid[line][col];
                 }
                 score += GetScore(colNumbers);
             }
 
-            score += SQUARE_CENTERS.Select(FlattenSquare).Sum(GetScore);
+            foreach(var squareCenter in SQUARE_CENTERS)
+            {
+                score += GetScore(FlattenSquare(squareCenter));
+            }
+
             this.Score = score;
             return score;
         }
 
-        private List<char> FlattenSquare((int line, int col) squareCenter)
+        private char[] FlattenSquare((int line, int col) squareCenter)
         {
-            var result = new List<char>();
+            var result = new char[9];
             var (line, col) = squareCenter;
-            foreach (var direction in SQUARE_DIRECTIONS)
+            for(int i = 0; i < 9; i++)
             {
-                result.Add(this.filledGrid[line + direction.x][col + direction.y]);
+                result[i] = filledGrid[line + SQUARE_DIRECTIONS[i].x][col + SQUARE_DIRECTIONS[i].y];
             }
             return result;
         }
 
-        private int GetScore(List<char> line)
+        private int GetScore(IEnumerable<char> line)
         {
-            return line.Distinct().Count(EXPECTED_NUMBERS.Contains);
+            return line.Distinct().Count(c => c != '.');
         }
 
         public void Fill(string fillingString)
